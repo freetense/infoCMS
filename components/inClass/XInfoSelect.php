@@ -43,7 +43,8 @@ class XInfoSelect
         	$this->search($this->arr);
         }
 		$this->result->setFetchMode(\PDO::FETCH_ASSOC);
-		$array = array("COUNT(" => "count_","MAX(" => "max_","MIN(" => "min_");
+
+		$array = array("COUNT(" => "count_","MAX(" => "max_","MIN(" => "min_","DISTINCT" => "distinct_");
 		foreach ($this->result as $row) 
 		{
 			foreach ($row as $key => $value) 
@@ -97,6 +98,12 @@ class XInfoSelect
 	}
 	public function sql($news, $value = '*', $disct  = false)
 	{
+		$infoDis = false;
+        if($disct == false){
+			$disct = "";
+		}else{
+			$disct = "DISTINCT ";
+		}
 		if($value != '*'){
 			$vals = true;
 			$arr = array("COUNT" => ":count", "MAX" => ':max', "MIN" => ':min');
@@ -105,8 +112,10 @@ class XInfoSelect
          			$position = strripos($value, $values);
          			$value = str_ireplace($values, "", $value);
          			if($position != false){
+						$infoDis = true;
 						$value = "$keys("
-								 . $value 
+								. $disct
+								. $value 
 							 	. ')';	
 					}
 				}
@@ -120,15 +129,13 @@ class XInfoSelect
 		}else{
 			$colums = $value;
 		}
-		if($disct == false){
-			$disct = "";
-		}else{
-			$disct = "DISTINCT";
-		}
 		$posit  = strripos($this->query, "UNION");
 		$union = "( ";
 		if($posit > 0){
 			$union = "";
+		}
+		if($infoDis == true){
+			$disct = "";
 		}
 		$this->query = $this->query . $union . "SELECT $disct "
 			. $colums
