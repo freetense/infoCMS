@@ -44,7 +44,7 @@ class XInfoSelect
         }
 		$this->result->setFetchMode(\PDO::FETCH_ASSOC);
 
-		$array = array("COUNT(" => "count_","MAX(" => "max_","MIN(" => "min_","DISTINCT" => "distinct_");
+		$array = array("COUNT(" => "count_","MAX(" => "max_","MIN(" => "min_","SUM(" => "sum_","DISTINCT" => "distinct_");
 		foreach ($this->result as $row) 
 		{
 			foreach ($row as $key => $value) 
@@ -106,7 +106,7 @@ class XInfoSelect
 		}
 		if($value != '*'){
 			$vals = true;
-			$arr = array("COUNT" => ":count", "MAX" => ':max', "MIN" => ':min');
+			$arr = array("COUNT" => ":count", "MAX" => ':max', "MIN" => ':min', "SUM" => ':sum');
          	foreach ($value as $key => $value) {
          		foreach ($arr as $keys => $values) {
          			$position = strripos($value, $values);

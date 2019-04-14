@@ -18,7 +18,7 @@
                 ->orderBy(['id:ASC'])
                 //->limit(2)
                 //->offset(0)
-                ->run();
+                ->query();
 
         }
 
