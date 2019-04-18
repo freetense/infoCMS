@@ -1,4 +1,7 @@
 <?php
+namespace components;
+use \Twig_Loader_Filesystem;
+use \Twig_Environment;
 class Twig {
 
 	public static function connect($admin = false)

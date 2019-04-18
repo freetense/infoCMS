@@ -3,5 +3,6 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Админка</title>
+  <script type="text/javascript" src="<?=JS?>script.js"></script>
  </head>
  <body>

@@ -1,4 +1,6 @@
 <?php
+namespace components\inClass;
+use components\inClass\XInfoDb;
 class XInfoInsert
 {
 	protected static $instance; 

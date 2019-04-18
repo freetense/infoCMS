@@ -1,6 +1,4 @@
-{% include 'layouts/header.php' %}
+<?php include(HEADER); ?>
   <h1>Заголовок3</h1>
- {% for datas in data|keys %}
-        <p>{{ data[datas]["title"] }}</p>
-    {% endfor %}
-{% include 'layouts/footer.php' %}
+  <?=$keys['0']['title']?>
+<?php include(FOOTER);?>

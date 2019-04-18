@@ -1,4 +1,8 @@
 <?php
+namespace adminPanel\models;
+use components\inClass\XInfoSelect;
+use components\inClass\XInfoInsert;
+use components\inClass\XInfoUpdate;
     class Admin
     {
         public static function run()

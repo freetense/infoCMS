@@ -1,7 +1,9 @@
 <?php
+namespace components\inClass;
+use components\inClass\XInfoDb;
 class XInfoSelect
 {
-	protected static $instance; 
+	protected static $instance;
 	public $query;
 	private $arr;
 	private $result;
@@ -45,11 +47,11 @@ class XInfoSelect
 		$this->result->setFetchMode(\PDO::FETCH_ASSOC);
 
 		$array = array("COUNT(" => "count_","MAX(" => "max_","MIN(" => "min_","SUM(" => "sum_","DISTINCT" => "distinct_");
-		foreach ($this->result as $row) 
+		foreach ($this->result as $row)
 		{
-			foreach ($row as $key => $value) 
+			foreach ($row as $key => $value)
 			{
-				foreach ($array as $keys => $values) 
+				foreach ($array as $keys => $values)
 				{
             		$position = strripos(' '.$key, $keys);
             		if($position != false){
@@ -69,7 +71,7 @@ class XInfoSelect
 	{
 		if($news != null){
 			$array = array();
-			foreach ($news as $key => $value) 
+			foreach ($news as $key => $value)
 			{
     			$array[":".$key] = $value;
 			}
@@ -87,10 +89,10 @@ class XInfoSelect
 			$union = "";
 		}
 		if($count == true){
-			$this->query = $this->query . $union . " SELECT COUNT(*)" 
+			$this->query = $this->query . $union . " SELECT COUNT(*)"
 			. " FROM `$news` ";
 		}else{
-			$this->query = $this->query . $union . " SELECT *" 
+			$this->query = $this->query . $union . " SELECT *"
 			. " FROM `$news` ";
 		}
 		$this->table = $news;
@@ -115,8 +117,8 @@ class XInfoSelect
 						$infoDis = true;
 						$value = "$keys("
 								. $disct
-								. $value 
-							 	. ')';	
+								. $value
+							 	. ')';
 					}
 				}
 				if($vals == false){
@@ -164,20 +166,20 @@ class XInfoSelect
 				foreach ($having as $key => $value) {
          		$prefix = '=';
 				unset($having[$key]);
-					for ($i=0; $i <=5; $i++) { 
+					for ($i=0; $i <=5; $i++) {
 						$position = strripos($key, ':'.$arr[$i]);
 						if($position != false){
          					$key = str_ireplace(':'.$arr[$i], "", $key);
-         					$prefix = $arr[$i];	
+         					$prefix = $arr[$i];
             			}
 						$position = false;
 					}
 					$operator = 'AND';
-					for ($i=0; $i <=1; $i++) { 
+					for ($i=0; $i <=1; $i++) {
 						$position = strripos($key, ':'.$array[$i]);
          				if($position != false){
          					$key = str_ireplace(':'.$array[$i], "", $key);
-         					$operator = $array[$i];	
+         					$operator = $array[$i];
             			}
 						$position = false;
 					}
@@ -191,8 +193,8 @@ class XInfoSelect
 					$vals = false;
 				}
 			}
-		$this->query = $this->query 
-			. " GROUP BY $colums ";  
+		$this->query = $this->query
+			. " GROUP BY $colums ";
 		return $this;
 	}
 	public function limit($one, $too = false){
@@ -201,21 +203,21 @@ class XInfoSelect
 		}else{
 			$too = "";
 		}
-		$this->query = $this->query 
-			. " LIMIT $one".$too." ";  
+		$this->query = $this->query
+			. " LIMIT $one".$too." ";
 		return $this;
 	}
 	public function offset($one){
 
-		$this->query = $this->query 
-			. " OFFSET $one ";  
+		$this->query = $this->query
+			. " OFFSET $one ";
 		return $this;
 	}
 	public function join($one, $too){
 		$array = array("LEFT","RIGHT","INNER","FULL");
 		$operator = '';
-		for ($i=0; $i <=3; $i++) { 
-			$position = strripos($one, ':'.$array[$i]);         		
+		for ($i=0; $i <=3; $i++) {
+			$position = strripos($one, ':'.$array[$i]);
          	if($position != false){
          		$one = str_ireplace(':'.$array[$i], "", $one);
          		$operator = $array[$i];
@@ -229,43 +231,43 @@ class XInfoSelect
 		foreach ($too as $key => $value) {
 			$operators = 'AND';
 			$array = array("OR","AND");
-			for ($i=0; $i <=1; $i++) { 
+			for ($i=0; $i <=1; $i++) {
 				$position = strripos($key, ':'.$array[$i]);
-         		
+
          		if($position != false){
          			unset($too[$key]);
          			$key = str_ireplace(':'.$array[$i], "", $key);
          			$too[$key] = $value;
-         			$operators = $array[$i];	
+         			$operators = $array[$i];
             	}
 				$position = false;
 			}
 			if($vals == false){
 				$colums = $colums . " $operators "
-						  . $key 
+						  . $key
 		   				  . " = " . $value;
 		    }else{
-		   		$colums = ' ON (' . $key 
+		   		$colums = ' ON (' . $key
 		   				  . " = " . $value;
 		   	}
 				$vals = false;
 		}
-		$this->query = $this->query 
-			. " $operator JOIN `$one` $colums)";  
+		$this->query = $this->query
+			. " $operator JOIN `$one` $colums)";
 		return $this;
-	}	
+	}
 	public function orderBy($news, $sort = "ASC"){
 			$vals = true;
 			$array = array("ASC","DESC");
          	foreach ($news as $key => $value) {
          	$operator = 'ASC';
-			for ($i=0; $i <=1; $i++) { 
+			for ($i=0; $i <=1; $i++) {
 				$position = strripos($value, ':'.$array[$i]);
-         		
+
          		if($position != false){
          			$value = str_ireplace(':'.$array[$i], "", $value);
          			$news[$key] = $value;
-         			$operator = $array[$i];	
+         			$operator = $array[$i];
             	}
 				$position = false;
 			}
@@ -276,8 +278,8 @@ class XInfoSelect
 		   		}
 					$vals = false;
 			}
-		$this->query = $this->query 
-			. " ORDER BY $colums ";  
+		$this->query = $this->query
+			. " ORDER BY $colums ";
 		return $this;
 	}
 	public function where($news = array())
@@ -291,23 +293,23 @@ class XInfoSelect
 		foreach ($news as $key => $value) {
 			$prefix = '=';
 			unset($news[$key]);
-			for ($i=0; $i <=6; $i++) { 
+			for ($i=0; $i <=6; $i++) {
 				$position = strripos($key, ':'.$arr[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$arr[$i], "", $key);
          			;
-         			$prefix = $arr[$i];	
+         			$prefix = $arr[$i];
             	}
 				$position = false;
 			}
 				$operator = 'AND';
-			for ($i=0; $i <=1; $i++) { 
+			for ($i=0; $i <=1; $i++) {
 				$position = strripos($key, ':'.$array[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$array[$i], "", $key);
-         			$operator = $array[$i];	
+         			$operator = $array[$i];
             	}
 				$position = false;
 			}
@@ -326,18 +328,18 @@ class XInfoSelect
 			$s++;
 			if($val == false){
 				$this->query =  $this->query . " $operator "
-					. $key 
+					. $key
 					. " "
 					. $prefix;
 		    	}else{
-					$this->query = $this->query 
-					. $key 
+					$this->query = $this->query
+					. $key
 					. " "
 					. $prefix;
 				}
 				$val = false;
-				
-				
+
+
 		}
         $this->arr = $news;
 		return $this;
@@ -353,23 +355,23 @@ class XInfoSelect
 		foreach ($news as $key => $value) {
 			$prefix = '=';
 			unset($news[$key]);
-			for ($i=0; $i <=10; $i++) { 
+			for ($i=0; $i <=10; $i++) {
 				$position = strripos($key, ':'.$arr[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$arr[$i], "", $key);
          			;
-         			$prefix = $arr[$i];	
+         			$prefix = $arr[$i];
             	}
 				$position = false;
 			}
 				$operator = 'AND';
-			for ($i=0; $i <=1; $i++) { 
+			for ($i=0; $i <=1; $i++) {
 				$position = strripos($key, ':'.$array[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$array[$i], "", $key);
-         			$operator = $array[$i];	
+         			$operator = $array[$i];
             	}
 				$position = false;
 			}
@@ -387,18 +389,18 @@ class XInfoSelect
 			$s++;
 			if($val == false){
 				$this->query =  $this->query . " $operator "
-					. $key 
+					. $key
 					. " "
 					. $prefix;
 		    	}else{
-					$this->query = $this->query 
-					. $key 
+					$this->query = $this->query
+					. $key
 					. " "
 					. $prefix;
 				}
 				$val = false;
-				
-				
+
+
 		}
 		return $this;
 	}

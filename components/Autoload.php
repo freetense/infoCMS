@@ -1,6 +1,5 @@
 <?php
-spl_autoload_register(
-function ($name)
+/**  spl_autoload_register(function ($name)
 {
 	$array_paths = array
 	(   '/components/inClass/',
@@ -16,10 +15,18 @@ function ($name)
 		if(is_file($path))
 		{
     		include_once $path;
+    		echo $name ."<br>";
 		}
 	}
-},true, true);
 
+}, true, false);
+ * */
+spl_autoload_register(function ($class) {
+    $path = str_replace('\\','/', $class.'.php');
+    if(file_exists($path)){
+        require $path;
+    }
+});
 require_once (ROOT.'/components/vendor/autoload.php');
 require_once(ROOT.'/components/Layouts.php');
 

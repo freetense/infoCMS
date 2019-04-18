@@ -1,4 +1,8 @@
 <?php
+use models\Admins;
+use components\Twig;
+use components\View;
+use components\Pagination;
 class AdminsController
 {
 	public function actionIndex()
@@ -6,9 +10,9 @@ class AdminsController
 		$newsList = array();
 		$newsList = Admins::run();
 		$twig  = Twig::connect(false);
-		print_r($newsList);
-		echo $twig->render('news/index.php', array('data' => $newsList));
-		return true;
+		//print_r($newsList);
+		return View::run('news/index', array('keys' => $newsList));
+		
 	}
 	public function actionView($id)
 	{

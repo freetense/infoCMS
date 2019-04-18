@@ -1,4 +1,8 @@
 <?php
+use adminPanel\models\Admin;
+use components\Twig;
+use components\View;
+use components\Pagination;
 class AdminController
 {
 	public function actionIndex()
