@@ -11,7 +11,8 @@ class AdminController
 		$newsList = Admin::run();
 		$twig  = Twig::connect(true);
 		print_r($newsList);
-		return $twig->render('news/index.php', array('data' => $newsList));
+		//return $twig->render('news/index.php', array('data' => $newsList));
+        return View::run('news/index', array('data' => $newsList));
 	}
 	public function actionView($id)
 	{

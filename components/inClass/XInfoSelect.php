@@ -225,15 +225,24 @@ class XInfoSelect
          			$operator = "FULL OUTER";
          		}
             }
+
 				$position = false;
 		}
 		$vals = true;
+        $arr = array('>=','<=','<>','=','<','>');
 		foreach ($too as $key => $value) {
+            $operatorsArr = "=";
+            for ($i=0; $i <=5; $i++) {
+                $position1 = strripos($key, ':' . $arr[$i]);
+                if ($position1 != false) {
+                    $key = str_ireplace(':' . $arr[$i], "", $key);
+                    $operatorsArr = $arr[$i];
+                }
+            }
 			$operators = 'AND';
 			$array = array("OR","AND");
 			for ($i=0; $i <=1; $i++) {
 				$position = strripos($key, ':'.$array[$i]);
-
          		if($position != false){
          			unset($too[$key]);
          			$key = str_ireplace(':'.$array[$i], "", $key);
@@ -245,10 +254,10 @@ class XInfoSelect
 			if($vals == false){
 				$colums = $colums . " $operators "
 						  . $key
-		   				  . " = " . $value;
+		   				  . $operatorsArr . $value;
 		    }else{
 		   		$colums = ' ON (' . $key
-		   				  . " = " . $value;
+		   				  . $operatorsArr . $value;
 		   	}
 				$vals = false;
 		}

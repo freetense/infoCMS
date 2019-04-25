@@ -11,7 +11,7 @@ class AdminsController
 		$newsList = Admins::run();
 		$twig  = Twig::connect(false);
 		//print_r($newsList);
-		return View::run('news/index', array('keys' => $newsList));
+		return View::run('news/index',  array('keys' => $newsList));
 		
 	}
 	public function actionView($id)

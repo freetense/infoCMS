@@ -89,10 +89,11 @@ class Router
 
 				if(method_exists(new $controllerObject,$actionName)){
 					$result = call_user_func_array(array($controllerObject, $actionName), $parameters);
-					echo $result;
+                   echo $result;
 			    }
 				if($result != null)
 				{
+
 					break;
 				}
 			}

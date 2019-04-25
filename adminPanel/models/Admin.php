@@ -15,11 +15,11 @@ use components\inClass\XInfoUpdate;
             //Insert::connect()->sql('news',$arra)->run();
             $ar = array('id', 'title');
 
-            return XinfoSelect::connect()->sql('news', $ar)
+            return XinfoSelect::connect()->all('news')
                 //->join("user:left",array("user.id" => "news.id1"))
                 //->join("user:RIGHT",array("id" => "id1"))
-                ->underWhere(array("news.id" => 1))
-                ->orderBy(['id:ASC'])
+               // ->underWhere(array("news.id" => 1))
+               // ->orderBy(['id:ASC'])
                 //->limit(2)
                 //->offset(0)
                 ->query();
