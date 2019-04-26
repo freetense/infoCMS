@@ -44,8 +44,19 @@ class XInfoUpdate
             }
 				$position = false;
 		}
-		$vals = true;
+        $vals = true;
+        $arr = array('>=','<=','<>','=','<','>');
+
 		foreach ($too as $key => $value) {
+            $operatorsArr = "=";
+            for ($i=0; $i <=5; $i++) {
+                $position1 = strripos($key, ':' . $arr[$i]);
+                if ($position1 != false) {
+                    $key = str_ireplace(':' . $arr[$i], "", $key);
+                    $operatorsArr = $arr[$i];
+                }
+            }
+
 			$operators = 'AND';
 			$array = array("OR","AND");
 			for ($i=0; $i <=1; $i++) { 
@@ -62,10 +73,10 @@ class XInfoUpdate
 			if($vals == false){
 				$colums = $colums . " $operators "
 						  . $key 
-		   				  . " = " . $value;
+		   				  . $operatorsArr . $value;
 		    }else{
 		   		$colums = ' ON (' . $key 
-		   				  . " = " . $value;
+		   				  . $operatorsArr . $value;
 		   	}
 				$vals = false;
 		}
@@ -185,6 +196,66 @@ class XInfoUpdate
 		$this->arr = array_merge($this->arr, $news);
 		return $this;
 	}
+    public function underWhere($news = array())
+    {
+        $val = true;
+        $this->query = $this->query . " WHERE ";
+        $arr = array('>=','<=','<>','=','<','>','LIKE','IN','EXISTS','NOT IN','NOT EXISTS');
+        $arr_value = array("IS NULL", "IS NOT NULL");
+        $array = array("OR","AND");
+        $s = 1;
+        foreach ($news as $key => $value) {
+            $prefix = '=';
+            unset($news[$key]);
+            for ($i=0; $i <=10; $i++) {
+                $position = strripos($key, ':'.$arr[$i]);
+
+                if($position != false){
+                    $key = str_ireplace(':'.$arr[$i], "", $key);
+                    ;
+                    $prefix = $arr[$i];
+                }
+                $position = false;
+            }
+            $operator = 'AND';
+            for ($i=0; $i <=1; $i++) {
+                $position = strripos($key, ':'.$array[$i]);
+
+                if($position != false){
+                    $key = str_ireplace(':'.$array[$i], "", $key);
+                    $operator = $array[$i];
+                }
+                $position = false;
+            }
+            $key1 = str_ireplace('.', "", $key);
+            $prefix = $prefix
+                . ' ' . $value
+                . ' ';
+            $news[$key1.$s] = $value;
+            foreach ($arr_value as $keys => $values) {
+                if($values == $value){
+                    $prefix = $value;
+                    unset($news[$key1.$s]);
+                }
+            }
+            $s++;
+            if($val == false){
+                $this->query =  $this->query . " $operator "
+                    . $key
+                    . " "
+                    . $prefix;
+            }else{
+                $this->query = $this->query
+                    . $key
+                    . " "
+                    . $prefix;
+            }
+            $val = false;
+
+
+        }
+        return $this;
+    }
 	public function limit($one){
 		$this->query = $this->query 
 			. " LIMIT $one";  
