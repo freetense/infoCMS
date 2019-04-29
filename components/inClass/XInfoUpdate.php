@@ -10,6 +10,7 @@ class XInfoUpdate
 	private $val;
 	private $table;
 	private $arrWhere;
+    public $s = 1;
 	public static function connect() {
         if ( !isset(self::$instance) ) {
             $class = __CLASS__;
@@ -21,16 +22,24 @@ class XInfoUpdate
 	public function query(){
 		$querys = "UPDATE $this->table " . $this->query;	
 		$this->query = "";
+        $this->s = 1;
 		return $querys;
 	}
-	public function run(){
+	public function run($news = false){
 		$db = XInfoDb::getConnection();
 		$this->query = "UPDATE $this->table " . $this->query;
-		$this->result = $db->prepare($this->query);
-        $this->result->execute($this->arr);
+        if($news != false){
+            $this->result = $db->prepare($news);
+            $this->result->execute();
+        }else{
+            $this->result = $db->prepare($this->query);
+            $this->result->execute($this->arr);
+        }
 		$this->query = "";
+        $this->s = 1;
 	}
 	public function join($one, $too){
+        $colums = "";
 		$array = array("LEFT","RIGHT","INNER","FULL");
 		$operator = '';
 		for ($i=0; $i <=3; $i++) { 
@@ -84,23 +93,23 @@ class XInfoUpdate
 			. " $operator JOIN `$one` $colums)";  
 		return $this;
 	}		
-	public function sql($news, $value, $disct  = false)
+	public function sql($news, $value)
 	{
 		$arrSql = array();
 		$vals = true;
-		$s = 1;
+        $colums = "";
          foreach ($value as $key => $values) {
          	$key1 = str_ireplace('.', "", $key);
          	$key1 = explode(":", $key1);
          	$key = explode(":", $key);
 			if($vals == false){
-				$colums =   $colums . ', ' . $key[0]."= :" . $key1[0].$s; 
+				$colums =   $colums . ', ' . $key[0]."= :" . $key1[0].$this->s;
 		    }else{
-		   		$colums = $key[0]." = :" . $key1[0].$s;
+		   		$colums = $key[0]." = :" . $key1[0].$this->s;
 		   	}
-		   	$arrSql[$key1[0].$s] = $values;
+		   	$arrSql[$key1[0].$this->s] = $values;
 				$vals = false;
-				$s++;
+             $this->s++;
 		}
          print_r($arrSql);
 		$this->query = $this->query . " SET $colums ";
@@ -108,7 +117,9 @@ class XInfoUpdate
 		$this->table = $news;
 		return $this;
 	}
+
 	public function orderBy($news, $sort = "ASC"){
+        $colums = "";
 			$vals = true;
 			$array = array("ASC","DESC");
          	foreach ($news as $key => $value) {
@@ -141,7 +152,6 @@ class XInfoUpdate
 		$arr = array('>=','<=','<>','=','<','>','LIKE');
 		$arr_value = array("IS NULL", "IS NOT NULL");
 		$array = array("OR","AND");
-		$s = 1;
 		foreach ($news as $key => $value) {
 			$prefix = '=';
 			unset($news[$key]);
@@ -168,16 +178,16 @@ class XInfoUpdate
 			$key1 = str_ireplace('.', "", $key);
 			$prefix = $prefix
 					  . " :"
-					  . $key1.$s
+					  . $key1.$this->s
 					  . " ";
-			$news[$key1.$s] = $value;
+			$news[$key1.$this->s] = $value;
 			foreach ($arr_value as $keys => $values) {
 				if($values == $value){
 					$prefix = $value;
-					unset($news[$key1.$s]);
+					unset($news[$key1.$this->s]);
 				}
 			}
-			$s++;
+            $this->s++;
 			if($val == false){
 				$this->query =  $this->query . " $operator "
 					. $key 
@@ -203,7 +213,6 @@ class XInfoUpdate
         $arr = array('>=','<=','<>','=','<','>','LIKE','IN','EXISTS','NOT IN','NOT EXISTS');
         $arr_value = array("IS NULL", "IS NOT NULL");
         $array = array("OR","AND");
-        $s = 1;
         foreach ($news as $key => $value) {
             $prefix = '=';
             unset($news[$key]);
@@ -231,14 +240,14 @@ class XInfoUpdate
             $prefix = $prefix
                 . ' ' . $value
                 . ' ';
-            $news[$key1.$s] = $value;
+            $news[$key1.$this->s] = $value;
             foreach ($arr_value as $keys => $values) {
                 if($values == $value){
                     $prefix = $value;
-                    unset($news[$key1.$s]);
+                    unset($news[$key1.$this->s]);
                 }
             }
-            $s++;
+            $this->s++;
             if($val == false){
                 $this->query =  $this->query . " $operator "
                     . $key
