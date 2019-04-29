@@ -20,16 +20,19 @@ class Admins
 		$ar1 = array('title'=>"6");
 		$ar2 = array('id' => 1);
 		//array('title:<='=>"green", 'date:OR:>'=>"green");
-        $arraySql = array('title'=>"infoCMS");
-        $arrayWhere = array('id' => 1);
+        $arraySql = array('newsToo.title' => "infoCMS112");
+        $arrayWhere = array('news.id' => 6);
         $Update = XinfoUpdate::connect();
-       // echo $Update->sql('news',$arraySql)->join("newsToo",array('id'=>"1"))->where($arrayWhere)->query();
-        $arrayWhere = array('id' => 1);
-        $arraySql = array('title'=>"infoCMS","titleToo" => 2);
+        return $Update->join("newsToo",array('news.newsToo' => "newsToo.id"))->sql('news',$arraySql)
+
+        ->where($arrayWhere)
+        ->run();
+        //$arrayWhere = array('id' => 1);
+        //$arraySql = array('title'=>"infoCMS","titleToo" => 2);
 
 
-        $Update = new XinfoUpdate();
-       echo $Update::connect()->sql('news',$arraySql)->query();
+       // $Update = new XinfoUpdate();
+      // echo $Update::connect()->sql('news',$arraySql)->query();
        //echo XinfoSelect::connect()->sql('news')
         //   ->join("user:left",array("user.id:AND" => "20","user.title:AND" => "news.title"))
             //->join("user:RIGHT",array("id" => "id1"))
