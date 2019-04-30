@@ -20,13 +20,17 @@ class Admins
 		$ar1 = array('title'=>"6");
 		$ar2 = array('id' => 1);
 		//array('title:<='=>"green", 'date:OR:>'=>"green");
-        $arraySql = array('newsToo.title' => "infoCMS112");
-        $arrayWhere = array('news.id' => 6);
+        $arraySql = array('title' => "infoCMS");
+        $arrayWhere = array('news.id:<=:or' => 3,'news.id:>:AND' => 3);
         $Update = XinfoUpdate::connect();
-        return $Update->join("newsToo",array('news.newsToo' => "newsToo.id"))->sql('news',$arraySql)
+        echo $Update
+            //->join("newsToo",array('news.newsToo' => "newsToo.id"))
+            ->sql('news',$arraySql)
 
+            //->orderBy(['id:DESC'])
+            //->limit(2)
         ->where($arrayWhere)
-        ->run();
+        ->query();
         //$arrayWhere = array('id' => 1);
         //$arraySql = array('title'=>"infoCMS","titleToo" => 2);
 
@@ -34,15 +38,16 @@ class Admins
        // $Update = new XinfoUpdate();
       // echo $Update::connect()->sql('news',$arraySql)->query();
        //echo XinfoSelect::connect()->sql('news')
-        //   ->join("user:left",array("user.id:AND" => "20","user.title:AND" => "news.title"))
+        //->join("user:left",array("user.id:or" => "20","user.title:AND" => "news.title","user.title1" => "news.title"))
             //->join("user:RIGHT",array("id" => "id1"))
-          //  ->Where(array("news.title" => 3))
+         //  ->Where(array("news.title:>:OR" => 3,"news.title:<" => 3))
           //   ->orderBy(['id:ASC'])
             //->limit(2)
             //->offset(0)
-         //   ->query();
+           // ->query();
 
-
+        $Select = XinfoSelect::connect();
+        echo $Select->sql('news',array("title"))->groupBy(array("id","title"),array("id:>" => 3,"id:<=:or" => 10))->query();
 
 	}
 	public static function runId($id)

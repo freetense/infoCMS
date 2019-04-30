@@ -160,25 +160,25 @@ class XInfoUpdate
 		foreach ($news as $key => $value) {
 			$prefix = '=';
 			unset($news[$key]);
-			for ($i=0; $i <=6; $i++) { 
+			for ($i=0; $i <=6; $i++) {
 				$position = strripos($key, ':'.$arr[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$arr[$i], "", $key);
          			;
-         			$prefix = $arr[$i];	
+         			$prefix = $arr[$i];
             	}
 				$position = false;
 			}
 				$operator = 'AND';
-			for ($i=0; $i <=1; $i++) { 
+			for ($i=0; $i <=1; $i++) {
 				$position = strripos($key, ':'.$array[$i]);
-         		
+
          		if($position != false){
          			$key = str_ireplace(':'.$array[$i], "", $key);
-         			$operator = $array[$i];	
+         			$operator = $array[$i];
             	}
-				$position = false;
+                $position = false;
 			}
 			$key1 = str_ireplace('.', "", $key);
 			$prefix = $prefix
@@ -195,18 +195,18 @@ class XInfoUpdate
             $this->s++;
 			if($val == false){
 				$this->query =  $this->query . " $operator "
-					. $key 
+					. $key
 					. " "
 					. $prefix;
 		    	}else{
-					$this->query = $this->query 
-					. $key 
+					$this->query = $this->query
+					. $key
 					. " "
 					. $prefix;
 				}
 				$val = false;
-				
-				
+
+
 		}
 		$this->arr = array_merge($this->arr, $news);
 		return $this;
