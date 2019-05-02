@@ -7,30 +7,34 @@ class Admins
 {
 	public static function run(){
 		$ar = array('id:count','title');
-		$arra = array(
-			array(null,'fgdfgfgd1', '2018-05-10 00:00:00', 'tertert1', 'erterte1','erterte1','terter3','ertert4'),
-			array(null,'fgdfgfgd1', '2018-05-10 00:00:00', 'tertert1', 'erterte1','erterte1','terter3','ertert4')
+		$array = array(
+			array("25",'title_insert', '2')
 		);
-		$arra1 = array('id', 'title', 'date', 'short_content', 'content', 'autor_name', 'type', 'preview');
-       // XInfoInsert::connect()->sql('news',$arra,$arra1)->query();
-		$arra2 = array("title", "short_content", "date");
+		$array_1 = array('id', 'title', 'newsToo');
+        //echo XInfoInsert::connect()->sql('news',$array,$array_1, "high")->query();
+        $dpl = array("title" => "infodubl", "newsToo" => "4");
+       // echo XinfoInsert::connect()->sql('news',$array,$array_1)->dupl($dpl)->query();
+       // return XinfoInsert::connect()->sql('news',$array,$array_1)->dupl($dpl)->run();
 
-		//$info1 = XinfoSelect::connect()->sql('news1',$arra2)->query();
-		//echo XinfoInsert::connect()->select('news', $info1,$arra2)->query();
-		$ar1 = array('title'=>"6");
-		$ar2 = array('id' => 1);
+        $array_1 = array('id', 'title');
+		$array_2 = array("null", "title");
+        $dpl = array("title" => "info","id" => "2");
+		$infoSelect = XinfoSelect::connect()->sql('news',$array_2)->query();
+		return XinfoInsert::connect()->select('newsToo', $infoSelect,$array_1)->run();
+		//$ar1 = array('title'=>"6");
+		//$ar2 = array('id' => 1);
 		//array('title:<='=>"green", 'date:OR:>'=>"green");
-        $arraySql = array('title' => "infoCMS");
-        $arrayWhere = array('news.id:<=:or' => 3,'news.id:>:AND' => 3);
-        $Update = XinfoUpdate::connect();
-        echo $Update
+        //$arraySql = array('title' => "infoCMS");
+        //$arrayWhere = array('news.id:<=:or' => 3,'news.id:>:AND' => 3);
+        //$Update = XinfoUpdate::connect();
+        //echo $Update
             //->join("newsToo",array('news.newsToo' => "newsToo.id"))
-            ->sql('news',$arraySql)
+            //->sql('news',$arraySql)
 
             //->orderBy(['id:DESC'])
             //->limit(2)
-        ->where($arrayWhere)
-        ->query();
+       // ->where($arrayWhere)
+       // ->query();
         //$arrayWhere = array('id' => 1);
         //$arraySql = array('title'=>"infoCMS","titleToo" => 2);
 
@@ -46,8 +50,8 @@ class Admins
             //->offset(0)
            // ->query();
 
-        $Select = XinfoSelect::connect();
-        echo $Select->sql('news',array("title"))->groupBy(array("id","title"),array("id:>" => 3,"id:<=:or" => 10))->query();
+       // $Select = XinfoSelect::connect();
+       // echo $Select->sql('news',array("title"))->groupBy(array("id","title"),array("id:>" => 3,"id:<=:or" => 10))->query();
 
 	}
 	public static function runId($id)

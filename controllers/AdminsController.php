@@ -10,7 +10,7 @@ class AdminsController
 		$newsList = array();
 		$newsList = Admins::run();
 		$twig  = Twig::connect(false);
-		print_r($newsList);
+		//print_r($newsList);
 		return View::run('news/index',  array('keys' => $newsList));
 		
 	}

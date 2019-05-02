@@ -59,9 +59,29 @@ class XInfoInsert
     	 	$this->result->execute();
     	}
 	}
-	public function sql($news, $value = false, $colums = false)
+    public function dupl($value = false)
+    {
+        $valDup = false;
+        $infoDupl = "";
+        if($value != false) {
+            foreach ($value as $key => $values) {
+                if($valDup == false) {
+                    $infoDupl = $infoDupl . " "
+                        . $key . " = \"" . $values. "\"";
+                }else{
+                    $infoDupl = $infoDupl . ", "
+                        . $key . " = \"" . $values . "\"";
+                }
+                $valDup = true;
+            }
+            $this->query = $this->query . " ON DUPLICATE KEY UPDATE "
+                           . $infoDupl;
+            return $this;
+        }
+    }
+	public function sql($news, $value = false, $colums = false,$lowHigh = false)
 	{
-		$ins = "";
+        $valLowHigh = "";
 		$valInfo = array();
 		$results = "";
 		$resultsColums = "";
@@ -116,17 +136,25 @@ class XInfoInsert
          		$resultsColums .= ')';
          	}
 		}
-		
-		$this->query = "INSERT INTO $news $resultsColums "
+        if ($lowHigh != false){
+            if(strtolower($lowHigh) == "low"){
+                $valLowHigh = " LOW_PRIORITY ";
+            }elseif( strtolower($lowHigh) == "high"){
+                $valLowHigh = " HIGH_PRIORITY ";
+            }else{
+                $valLowHigh = "";
+            }
+        }
+		$this->query = "INSERT $valLowHigh INTO $news $resultsColums "
 			.' VALUES '
 			.$results;
 			$this->table = $news;
 			$this->arr = $value;
-		echo $this->query;
 		return $this;
 	}
-		public function select($news, $select = false, $colums = false)
+		public function select($news, $select = false, $colums = false,$lowHigh = false)
 	{
+	    $valLowHigh = "";
 		$resultsColums = "";
 	    if($colums != false){
          		$vals = true;
@@ -143,7 +171,16 @@ class XInfoInsert
         $select =  str_replace("(", "", $select);
         $select =  str_replace(")", "", $select);
         $select =  str_replace("`", "", $select);
-		$this->query = "INSERT INTO $news$resultsColums "
+        if ($lowHigh != false){
+            if(strtolower($lowHigh) == "low"){
+                $valLowHigh = " LOW_PRIORITY ";
+            }elseif( strtolower($lowHigh) == "high"){
+                $valLowHigh = " HIGH_PRIORITY ";
+            }else{
+                $valLowHigh = "";
+            }
+        }
+        $this->query = "INSERT $valLowHigh INTO $news$resultsColums "
 			.$select;
 		$this->info = "info";
 		$this->table = $news;
