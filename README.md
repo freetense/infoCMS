@@ -106,6 +106,44 @@ index — это контроллер (функция) **actionIndex()** кла�
 
 **dbname** — имя базы данных
 
+# Подключение template, header и footer в InfoCMS
+
+1) template
+
+Для подключения css js и images из templete используются константы **CSS JS** и **IMAGES**.
+
+Пример 1 (при использовании Twig):
+```
+<script type="text/javascript" src="{{constant('JS')}}script.js"></script>
+```
+В этом примере используется Twig шаблонизатор, который подключает константу **JS**.
+
+Пример 2 (используя класс View):
+```
+<script type="text/javascript" src=<?=JS?>script.js"></script>
+```
+Список констант:
+
+**CSS** — /template/css/
+
+**JS** — /template/js/
+
+**IMAGES** — /template/images/
+
+2) header и footer
+
+![](https://sun9-17.userapi.com/impf/c851032/v851032935/f6974/oyqItlK3FA0.jpg?size=181x74&quality=96&sign=59f2f3ea298696d40a8951d5a4c1ed54&type=album)
+
+**{% include 'layouts/header.php' %}** — подключение header-а с помощью шаблонизатора Twig
+
+**{% include 'layouts/footer.php %}** — подключение footer-a c помощью шаблонизатора Twig
+
+**<?php include(HEADER);?>** — подключение header-а с помощью View.
+
+**<?php include(FOOTER);?>** — подключение footer-a c помощью View.
+
+Для админ-панели используются константы **HEADERADMIN** и **FOOTERADMIN**.
+
 **user** — имя пользователя
 
 **password** — пароль пользователя
