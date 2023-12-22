@@ -726,3 +726,118 @@ return $Update->sql('news',$arraySql)->where($arrayWhere)->run();
 **value…value_n** — это значение поля таблицы в нашем случае 3 и 10
 
 Если с помощью методов не возможно сформировать нужный запрос используйте функцию **run()**.
+
+
+
+
+
+
+
+
+
+# Класс XInfoInsert в InfoCMS
+
+Класс добавляет записи в таблице используя **INSERT** базы данных MySQL.
+
+**1) sql(tablename, array(value_1,…value_n), array(column_1,…column_n),lowHigh)** — формирует запрос **INSERT** для добавления в базу данных **MySQL**.
+
+Пример:
+```
+$array = array(
+   array(null,'title_insert', 2),
+   array(null,'title_insert', 2)
+);
+$array_1 = array('id', 'title', 'newsToo');
+$Insert = XInfoInsert::connect();
+return $Insert->sql('news',$array,$array_1)->run();
+```
+Получается запрос **INSERT INTO news ( id,title,newsToo) VALUES (null,'title_insert', 2),(null,'title_insert', 2)**
+
+![](https://sun9-80.userapi.com/impf/c845120/v845120442/1eff41/0gNx_79df6I.jpg?size=327x187&quality=96&sign=d7312deeb2387ed8a4d3289bc92d91a5&type=album)
+
+где,
+
+**tablename** — имя таблицы для добавления записей.
+
+**array(value_1,…value_n)** — это значения для добавления в таблицу, в нашем случае многомерный массив **$array = array(array(null,'title_insert', 2),array(null,'title_insert', 2));**
+
+**array(column_1,…column_n)** — массив с названием столбцов **id,title,newsToo** в которые добавляются записи.
+
+**P.S.** записи значений должны формироваться по порядку и в том количестве в котором сформирован массив с названием столбцов. Если есть первичный ключ для того чтобы он добавляется автоматически значению присваивается значение null.
+
+**lowHigh** — приоритет записей имеет два значения:
+
+**low** — низкий приоритет добавления INSERT **LOW_PRIORITY** INTO news (title) VALUES ('title_insert')
+
+**high** — высокий приоритет добавления INSERT **HIGH_PRIORITY** INTO news (title) VALUES ('title_insert')
+
+**2) run(sql)** — запускает выполнение запроса.
+
+Пример:
+```
+$Insert = XInfoInsert::connect();
+return $Insert->run("INSERT INTO news ( id,title,newsToo) VALUES (null,'title_insert', 2),(null,'title_insert', 2)");
+```
+где параметр **sql** это обычный mysql запрос
+
+**3) query()** — формирует запрос в виде строки(используется для проверки правильности запроса).
+
+Пример:
+```
+$array = array(
+   array(null,'title_insert', 2),
+   array(null,'title_insert', 2)
+);
+$array_1 = array('id', 'title', 'newsToo');
+$Insert = XInfoInsert::connect();
+echo $Insert->sql('news',$array,$array_1)->query();
+```
+скрипт выведет на экран запрос **INSERT INTO news ( id,title,newsToo) VALUES (null,'title_insert', 2),(null,'title_insert', 2)**
+
+**4) dupl(array(field => value,field_1 => value_1,…field_n => value_n))** — формирует запрос для обновления дублирующихся значений.
+
+Пример:
+```
+$array = array(
+   array("25",'title_insert', '2')
+);
+$array_1 = array('id', 'title', 'newsToo');
+$dpl = array("title" => "infodubl", "newsToo" => "4");
+$Insert = XInfoInsert::connect();
+return $Insert->sql('news',$array,$array_1)->dupl($dpl)->run();
+```
+Формируется запрос:
+
+**INSERT INTO news ( id,title,newsToo) VALUES ("25",'title_insert', '2') ON DUPLICATE KEY UPDATE title = "infodubl", newsToo = "4"**
+
+Где,
+
+**array(field => value,field_1 => value_1,…field_n => value_n)** — это массив столбцов **field…field_n** и значений **value..value_n** в которые должна обновится найденная дублирующаяся строка, в нашем случае это **title = "infodubl", newsToo = "4"**.
+
+![](https://sun9-53.userapi.com/impf/c845120/v845120242/1f8b60/gGS1ABvC7C8.jpg?size=322x185&quality=96&sign=9b50f471d60469698bdb03a702ef8351&type=album)
+
+**5) select(tablename, XinfoSelect, array(column_1,…column_n),lowHigh)** — вставка значений на основе значений из другой таблицы.
+
+Пример:
+```
+$array_1 = array('id', 'title');
+$array_2 = array("null", "title");
+$infoSelect = XinfoSelect::connect()->sql('news',$array_2)->query();
+$Insert = XInfoInsert::connect();
+return $Insert->select('newsToo', $infoSelect,$array_1)->run();
+```
+Выполняется запрос **INSERT INTO newsToo( id,title) SELECT null,title FROM news**, он добавляет из таблицы **news** значения **title** в таблицу **newsToo**.
+
+![](https://sun9-5.userapi.com/impf/c846524/v846524242/1f658a/ANcBMTY32FY.jpg?size=246x152&quality=96&sign=ce5df37b538670ba5cbe1348482c08a8&type=album)
+
+**tablename** — имя таблицы для добавления.
+
+**XinfoSelect — Select** запрос для выборки добавляющихся значений из таблицы(в нашем случае это news).
+
+**lowHigh** — приоритет записей имеет два значения:
+
+**low** — низкий приоритет добавления.
+
+**high** — высокий приоритет добавления.
+
+**P.S.** значение для первичного ключа рано null и обозначается в кавычках.
