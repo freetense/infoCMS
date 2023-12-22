@@ -1,4 +1,4 @@
-### Структура InfoCMS
+## Структура InfoCMS
 
 ![](https://sun9-34.userapi.com/impf/c851132/v851132706/f390f/l2I1Ml8gnWU.jpg?size=553x305&quality=96&sign=196a664a42fb5cd413aae0cb50c1e375&type=album)
 
@@ -37,7 +37,7 @@ a) views/layouts — в этой папке хранятся, хедер (**head
 
 
 
-### Работа с routes в InfoCMS
+## Работа с routes в InfoCMS
 
 1) Структура **routes.php**
 
