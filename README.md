@@ -267,6 +267,294 @@ return View::run('news/view', array(), false);
 
 **false** — использовать представление из папки **views**.
 
+
+# Класс XInfoSelect в InfoCMS
+Класс используется для формирования запроса SELECT, который выводит из базы данных определенные значения.
+
+Функции класса:
+
+**1) sql(tablename, array(field:comparison,field1:comparison,…), boolen)** — формирует запрос SELECT.
+
+Пример:
+```
+ $Select = XinfoSelect::connect();
+ return $Select->sql('news',array('id:count','title'))->run();
+```
+в итоге получится запрос **SELECT COUNT(id),title FROM `news`**
+
+где,
+
+**news** — таблица базы данных.
+
+**COUNT(id)** — это id:count.
+
+comparison имеет три значения
+
+**:count** — COUNT()
+
+**:max** — MAX()
+
+**:min** — MIN()
+
+**:sum** — SUM()
+
+**boolen** значение — это присутствие оператора DISTINCT, который выбирает только уникальные значения, может иметь значения **true** (присутствует) и **false** (отсутствует оператор)
+
+**SELECT DISTINCT title FROM `news`**
+
+Используется только с одним полем **field**.
+
+**2) run(sql)** — запускает выполнение запроса.
+
+Пример:
+```
+$Select = XinfoSelect::connect();
+return $Select->run("SELECT COUNT(id),title FROM `news`");
+```
+где параметр **sql** это обычный mysql запрос
+
+**3) query()** — формирует запрос в виде строки(используется для проверки правильности запроса).
+Пример:
+```
+ $Select = XinfoSelect::connect();
+ echo $Select->sql('news',array('id:count','title'))->query();
+```
+скрипт выведет на экран запрос **(SELECT COUNT(id),title FROM `news`)**
+
+**4) union()** — используется для объединения двух запросов.
+Пример:
+```
+ $Select = XinfoSelect::connect();
+ return $Select->sql('news',array("title"))->union()->sql('news1',array("title"))->run();
+```
+код инициализирует запрос **SELECT title FROM `news` UNION SELECT title FROM `news1`** объединяя параметром **UNION**;
+**
+5) groupBy(array(field,field1,…) , array(having:comparison => value, having1:comparison:comparation_1 => value1,…))** — используется для объединения полей по значению.
+
+Пример:
+```
+ $Select = XinfoSelect::connect();
+ return $Select->sql('news',array("title"))->groupBy(array("id","title"),array("id:>" => 3,"id:<=:and" => 10))->run();
+```
+В итоге сформируется запрос:
+
+**( SELECT title FROM `news` GROUP BY id,title HAVING id > 3 AND id <= 10 )**
+
+где,
+
+в первом массиве **field** — это имя столбца таблицы **news**, в нашем случае это два столбца **id** и **title**.
+
+Второй массив содержит:
+
+**HAVING** - применяется для фильтрации столбцов.
+
+где,
+
+**having** — столбец id который содержит значение ключа массива **comparison (:> и :<=)** равное > и ≤ соответственно,
+
+а также **comparation_1** которое содержит значение **:and** разделитель между условиями равный **AND** (в первом элементе массива оно игнорируется).
+
+**value** — значение для сравнения в нашем случае это **3** и **10**
+
+Значения **comparison**:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**:
+
+**:or** — логическое или
+
+**:and** — логическое и.
+
+**6) all(tablename,boolen)** — функция выводит все записи или подсчитывает количество записей таблицы.
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->all('news',false)->run();
+```
+news — это название таблицы
+
+**boolen** принимает два значения
+
+**true**
+```
+$Select = XInfoSelect::connect();
+return $Select->all('news',true)->run();
+```
+**( SELECT COUNT(*) FROM `news` )**
+
+**false**
+```
+$Select = XInfoSelect::connect();
+return $Select->all('news',false)->run();
+```
+**( SELECT * FROM `news` )**
+
+**7) limit($start,$end)** — выводит определенный лимит записей в зависимости от значения.
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->sql('news',array("title"))->limit(2,4)->run();
+```
+**( SELECT title FROM `news` LIMIT 2,4 )**
+
+Пример выводит записи начиная с 2 по 4.
+
+**8) offset($value)** — отсчитывает записи из таблицы начиная с указанного значения.
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->sql('news',array("title"))->offset(5)->run();
+```
+**( SELECT title FROM `news` OFFSET 5 )**
+
+Вводит записи начиная с 5-ой.
+
+**9) join(tablename:join, array(field:comparison => value,…field_n:comparison:comparison_1 => value_n))** — используется для объединения таблиц.
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->sql('news')->join("user:left",array("user.id:>" => "20","user.title:AND" => "news.title"))->run();
+```
+В итоге сформируется запрос:
+
+**( SELECT * FROM `news` LEFT JOIN `user` ON (user.id >20 AND user.title = news.title) )**
+
+где,
+
+**tablename** — имя таблицы для объединения join
+
+**join** — тип **join** который имеет несколько значений **LEFT,RIGHT,INNER и FULL** соответствующий значениям **join** mysql запроса. Если **comparison** не указан по умолчанию будет равен join.
+
+**field** — это имя столбца таблицы, в нашем примере это user.id и user.title
+
+Значения **comparison**:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**:
+
+**:or** — логическое или
+
+**:and** — логическое и.
+
+**value…value_n** — это значение поля таблицы в нашем случае 20 и news.title
+
+**10) orderBy(field:description)** — водит таблицу исходя из значений field(название поля) и description(сортировка в исходном или обратном порядке).
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->sql('news')->orderBy(['id:ASC'])->run();
+```
+В итоге сформируется запрос:
+
+**( SELECT * FROM `news` ORDER BY `id` ASC )**
+
+**field** — имя поля для сортировки, в нашем случае **id**
+
+**description** сортировка имеет значения:
+
+**ASC** - сортирует по возрастанию
+
+**DESC** - сортирует по убыванию
+
+**11) where(array(field:comparation => value,…field_n:comparation:comparation_1 => value_n))** — фильтрует значение таблиц в зависимости от условий, используется **pdo**. Используется только один раз в главном запросе.
+
+Пример:
+```
+$Select = XInfoSelect::connect();
+return $Select->sql('news')->sql('news')->Where(array("news.id:>" => 3,"news.id:<:and" => 30))->run();
+```
+**( SELECT * FROM `news` WHERE news.id > :newsid1 AND news.id < :newsid2 )**
+
+где,
+
+**field** — это имя столбца таблицы, в нашем примере это user.id
+
+Значения **comparison**:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**:
+
+**:or** — логическое или
+
+**:and** — логическое и.
+
+**value…value_n** — это значение поля таблицы в нашем случае 3 и 30
+
+**12) underWhere(array(field:comparation => value,…field_n:comparation:comparation_1 => value_n))** — фильтрует значение таблиц в зависимости от условий, обращаясь к значениям напрямую без **pdo**.
+
+Пример:
+```
+ $Select = XInfoSelect::connect();
+return $Select->sql('news')->sql('news')->join("user",array("user.id" => "20","user.title:AND" => "news.title"))->underWhere(array("news.id:>" => 3,"news.id:<:and" => 30)) ->run();
+```
+**( SELECT * FROM `news` JOIN `user` ON (user.id=20 AND user.title=news.title) WHERE news.id > 3 AND news.id < 30 )**
+
+где,
+
+**field** — это имя столбца таблицы, в нашем примере это news.id
+
+Значения comparison:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**:
+
+**:or** — логическое или
+
+**:and** — логическое и.
+
+**value…value_n** — это значение поля таблицы в нашем случае 3 и 30
+
+**P.S.** если с помощью вспомогательных функций не возможно сформировать нужный запрос, вы можете использовать функцию **run()** в которой можно сформировать любой sql - запрос.
+
 **user** — имя пользователя
 
 **password** — пароль пользователя
