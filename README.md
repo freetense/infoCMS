@@ -612,7 +612,9 @@ return $Update->join("newsToo",array('news.newsToo' => "newsToo.id"))->sql('news
 В этом запросе таблица **news** проверяет равенство поля **newsToo** полю **id** таблицы **newsToo (ON (news.newsToo=newsToo.id))** если поле соответствует значению, поле **title** таблицы **newsToo** становится равным infoCMS.
 
 ![](https://sun9-15.userapi.com/impf/c848632/v848632178/177cba/Y6C62EP3lAM.jpg?size=293x151&quality=96&sign=6b37a52d38ed62549afc2beea966dc51&type=album)
+
 ![](https://sun9-29.userapi.com/impf/c848632/v848632178/177cc1/Bv3LbifvNo8.jpg?size=241x146&quality=96&sign=eaf95151e87665775807c4d7125077df&type=album)
+
 Запрос:
 
 **UPDATE news JOIN `newsToo` ON (news.newsToo=newsToo.id) SET newsToo.title = infoCMS**
@@ -658,7 +660,9 @@ return $Update->sql('news',$arraySql)->limit(2)->run();
 **UPDATE news SET title = infoCMS LIMIT 2**
 
 Пример обновляет 2-а первых поля.
+
 ![](https://sun9-12.userapi.com/impf/c848632/v848632178/177cdb/24ZN6ft6u0I.jpg?size=307x135&quality=96&sign=9b8f9500a20873f77c26e450423b7f19&type=album)
+
 **6) orderBy(field:description)** — обновляет таблицу исходя из значений field(название поля) и description(сортировка в исходном или обратном порядке).
 
 Пример:
@@ -668,7 +672,9 @@ $Update = XinfoUpdate::connect();
 return $Update->sql('news',$arraySql)->orderBy(['id:DESC'])->limit(2)->run();
 ```
 В нашем случае обновляются две записи значения **title** таблицы **news** отсортированные по убыванию.
+
 ![](https://sun9-76.userapi.com/impf/c848632/v848632467/17dc74/0jz_rWc9Ofo.jpg?size=309x138&quality=96&sign=428cd43d03a1911aef06902233a57edb&type=album)
+
 Запрос:
 
 **UPDATE news SET title = :title1 ORDER BY `id` DESC LIMIT 2**
