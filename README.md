@@ -558,3 +558,165 @@ return $Select->sql('news')->sql('news')->join("user",array("user.id" => "20","u
 **value…value_n** — это значение поля таблицы в нашем случае 3 и 30
 
 **P.S.** если с помощью вспомогательных функций не возможно сформировать нужный запрос, вы можете использовать функцию **run()** в которой можно сформировать любой sql - запрос.
+
+
+
+
+# Класс XInfoUpdate в InfoCMS
+Класс формирует запрос **UPDATE** для обновления строк таблиц базы данных MySQL
+
+**1) sql(tablename, array(field,field_1,…field_n))** — формирует запрос UPDATE.
+
+Пример:
+```
+$arraySql = array('title'=>"infoCMS","titleToo" => 2);
+$Update = new XinfoUpdate();
+return $Update::connect()->sql('news',$arraySql)->run();
+```
+в итоге получится запрос **UPDATE news SET title = infoCMS, titleToo= 2**
+
+где,
+
+**news** — таблица базы данных.
+
+**field,field_1,…field_n** — обновляемый массив значений, в нашем случае это **array('title'=>"infoCMS","titleToo" => 2)**
+
+**2) run(sql)** — запускает выполнение запроса.
+
+Пример:
+```
+$Update = XinfoUpdate::connect();
+return $Update->run("UPDATE news SET title = title WHERE id = 1");
+```
+где параметр **sql** это обычный mysql запрос
+
+**3) query()** — формирует запрос в виде строки(используется для проверки правильности запроса).
+
+Пример:
+```
+$arraySql = array('title'=>"infoCMS");
+$arrayWhere = array('id' => 1);
+echo XinfoUpdate::connect();->sql('news',$arraySql)->where($arrayWhere)->query();
+```
+скрипт выведет на экран запрос **UPDATE news SET title = infoCMS WHERE id = 1**
+
+**4) join(tablename:join, array(field:comparison => value,…field_n:comparison:comparison_1 => value_n))** — используется для объединения таблиц.
+
+Пример:
+```
+$arraySql = array('newsToo.title' => "infoCMS");
+$Update = XinfoUpdate::connect();
+return $Update->join("newsToo",array('news.newsToo' => "newsToo.id"))->sql('news',$arraySql)
+->run();
+```
+В этом запросе таблица **news** проверяет равенство поля **newsToo** полю **id** таблицы **newsToo (ON (news.newsToo=newsToo.id))** если поле соответствует значению, поле **title** таблицы **newsToo** становится равным infoCMS.
+
+![](https://sun9-15.userapi.com/impf/c848632/v848632178/177cba/Y6C62EP3lAM.jpg?size=293x151&quality=96&sign=6b37a52d38ed62549afc2beea966dc51&type=album)
+![](https://sun9-29.userapi.com/impf/c848632/v848632178/177cc1/Bv3LbifvNo8.jpg?size=241x146&quality=96&sign=eaf95151e87665775807c4d7125077df&type=album)
+Запрос:
+
+**UPDATE news JOIN `newsToo` ON (news.newsToo=newsToo.id) SET newsToo.title = infoCMS**
+
+где,
+
+**tablename** — имя таблицы для объединения join
+
+**join** — тип **join** который имеет несколько значений **LEFT,RIGHT,INNER и FULL** соответствующий значениям **join** mysql запроса. Если **comparison** не указан по умолчанию будет равен join.
+
+**field** — это имя столбца таблицы, в нашем примере это **news.newsToo**
+
+Значения **comparison**:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**:
+
+**:or** — логическое или
+
+**:and** — логическое и.
+
+**value…value_n** — это значение поля таблицы в нашем случае **newsToo.id**
+
+**5) limit($value)** — обновляет определенный лимит записей в зависимости от значения.
+
+Пример:
+```
+$arraySql = array('title' => "infoCMS");
+$Update = XinfoUpdate::connect();
+return $Update->sql('news',$arraySql)->limit(2)->run();
+```
+**UPDATE news SET title = infoCMS LIMIT 2**
+
+Пример обновляет 2-а первых поля.
+![](https://sun9-12.userapi.com/impf/c848632/v848632178/177cdb/24ZN6ft6u0I.jpg?size=307x135&quality=96&sign=9b8f9500a20873f77c26e450423b7f19&type=album)
+**6) orderBy(field:description)** — обновляет таблицу исходя из значений field(название поля) и description(сортировка в исходном или обратном порядке).
+
+Пример:
+```
+$arraySql = array('title' => "infoCMS");
+$Update = XinfoUpdate::connect();
+return $Update->sql('news',$arraySql)->orderBy(['id:DESC'])->limit(2)->run();
+```
+В нашем случае обновляются две записи значения **title** таблицы **news** отсортированные по убыванию.
+![](https://sun9-76.userapi.com/impf/c848632/v848632467/17dc74/0jz_rWc9Ofo.jpg?size=309x138&quality=96&sign=428cd43d03a1911aef06902233a57edb&type=album)
+Запрос:
+
+**UPDATE news SET title = :title1 ORDER BY `id` DESC LIMIT 2**
+
+**field** — имя поля для сортировки, в нашем случае **id**
+
+**description** сортировка имеет значения:
+
+**ASC** - сортирует по возрастанию
+
+**DESC** - сортирует по убыванию
+
+**7) where(array(field:comparation => value,…field_n:comparation:comparation_1 => value_n))** — фильтрует значение таблиц в зависимости от условий, используется **pdo**. Используется только один раз в главном запросе.
+
+Пример:
+```
+$arraySql = array('title' => "infoCMS");
+$arrayWhere = array('news.id:<=' => 3,'news.id:>:or' => 10);
+$Update = XinfoUpdate::connect();
+return $Update->sql('news',$arraySql)->where($arrayWhere)->run();
+```
+
+**UPDATE news SET title = infoCMS WHERE news.id <= 3 OR news.id > 10**
+
+где,
+
+**field** — имя столбца таблицы, в нашем примере это user.id
+
+Значения **comparison**:
+
+**:>** — больше,
+
+**:<** — меньше,
+
+**:<=** — меньше или равно,
+
+**:>=** больше или равно,
+
+**:=** — равно,
+
+**:<>** — не равно
+
+Значения **comparation_1**(в первом элементе массива оно игнорируется):
+
+**:OR** — логическое или
+
+**:AND** — логическое и.
+
+**value…value_n** — это значение поля таблицы в нашем случае 3 и 10
+
+Если с помощью методов не возможно сформировать нужный запрос используйте функцию **run()**.
